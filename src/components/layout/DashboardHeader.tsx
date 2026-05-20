@@ -1,23 +1,33 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Bell, Search, Menu, X, Moon, Sun } from 'lucide-react';
+import { Bell, Search, Menu, X, Moon, Sun, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { logout } from '@/actions/auth.actions';
 
-export function DashboardHeader({ user }: { user: any }) {
+export function DashboardHeader({ user, onMenuToggle, menuOpen }: { user: any; onMenuToggle?: () => void; menuOpen?: boolean }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [loggingOut, setLoggingOut] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+  };
+
   return (
     <header className="h-14 bg-card/95 backdrop-blur border-b flex items-center gap-3 px-4 lg:px-6 sticky top-0 z-30">
-      {/* Mobile menu placeholder */}
-      <button className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors">
-        <Menu className="h-5 w-5" />
+      {/* Mobile menu toggle */}
+      <button
+        onClick={onMenuToggle}
+        className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors active:scale-95"
+        aria-label="فتح القائمة"
+      >
+        {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       {/* Search */}
@@ -54,6 +64,16 @@ export function DashboardHeader({ user }: { user: any }) {
           <Bell className="h-4.5 w-4.5" />
           <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-background" />
         </Link>
+
+        {/* Logout button (mobile visible, desktop also visible) */}
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 transition-colors lg:hidden"
+          title="تسجيل الخروج"
+        >
+          <LogOut className="h-4.5 w-4.5" />
+        </button>
 
         {/* User avatar */}
         <Link href="/settings" className="flex items-center gap-2 rounded-xl bg-muted/60 px-2.5 py-1.5 hover:bg-muted transition-colors">
