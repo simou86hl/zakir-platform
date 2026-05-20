@@ -13,18 +13,7 @@ export function AdminShell({ user, children }: { user: any; children: React.Reac
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
-      {/* Desktop sidebar */}
-      <AdminSidebar user={user} />
-
-      {/* Mobile sidebar overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-          <div className="fixed right-0 top-0 bottom-0 w-72 z-50">
-            <AdminSidebar user={user} />
-          </div>
-        </div>
-      )}
+      <AdminSidebar user={user} mobileOpen={menuOpen} onMobileClose={() => setMenuOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0 lg:mr-72">
         <header className="h-14 bg-white dark:bg-slate-900 border-b flex items-center px-4 gap-4 sticky top-0 z-30">
