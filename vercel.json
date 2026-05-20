@@ -5,7 +5,7 @@
   "regions": ["cdg1"],
   "env": {
     "PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING": "1",
-    "DATABASE_URL": "postgresql://postgres.gnzgpooyxqplymxltrqe:1IXj1OCL9PloHHKu@aws-0-eu-west-1.pooler.supabase.com:6543/postgres",
+    "DATABASE_URL": "postgresql://postgres.gnzgpooyxqplymxltrqe:1IXj1OCL9PloHHKu@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1",
     "DIRECT_URL": "postgresql://postgres.gnzgpooyxqplymxltrqe:1IXj1OCL9PloHHKu@aws-0-eu-west-1.pooler.supabase.com:5432/postgres",
     "AUTH_SECRET": "7kLOSSTrxPui6TY/aLnG5UARcU96TtdpL5uhmEvUlH0=",
     "NEXTAUTH_SECRET": "7kLOSSTrxPui6TY/aLnG5UARcU96TtdpL5uhmEvUlH0=",
