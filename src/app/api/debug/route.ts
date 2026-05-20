@@ -18,17 +18,29 @@ export async function GET() {
   };
 
   // Show DATABASE_URL structure (hide password)
+  const dbUrlToCheck = process.env.DIRECT_URL || process.env.DATABASE_URL;
+  if (dbUrlToCheck) {
+    try {
+      const url = new URL(dbUrlToCheck);
+      results.dbUrlInfo = {
+        hostname: url.hostname,
+        port: url.port,
+        isPooler: url.hostname.includes('pooler.supabase.com'),
+        isDirect: url.hostname.includes('db.'),
+      };
+    } catch (e: any) {
+      results.dbUrlInfo = { error: 'Invalid URL: ' + e.message };
+    }
+  }
+
   if (process.env.DATABASE_URL) {
     try {
       const url = new URL(process.env.DATABASE_URL);
       results.databaseUrlInfo = {
-        protocol: url.protocol,
         hostname: url.hostname,
         port: url.port,
-        pathname: url.pathname,
-        searchParams: Object.fromEntries(url.searchParams.entries()),
-        username: url.username,
-        passwordLength: url.password?.length || 0,
+        isPooler: url.hostname.includes('pooler.supabase.com'),
+        isDirect: url.hostname.includes('db.'),
       };
     } catch (e: any) {
       results.databaseUrlInfo = { error: 'Invalid URL: ' + e.message };
@@ -39,9 +51,13 @@ export async function GET() {
   try {
     const { default: prisma } = await import('@/lib/prisma');
     const userCount = await prisma.user.count();
+    const subjectCount = await prisma.subject.count();
+    const profileCount = await prisma.studentProfile.count();
     results.database = { 
       status: 'CONNECTED', 
       userCount,
+      subjectCount,
+      profileCount,
     };
   } catch (error: any) {
     results.database = { 
@@ -59,6 +75,38 @@ export async function GET() {
     results.bcrypt = match ? 'WORKING' : 'NOT WORKING';
   } catch (error: any) {
     results.bcrypt = 'ERROR: ' + error.message;
+  }
+
+  // Test subjects query for student@zakir.edu
+  try {
+    const { default: prisma } = await import('@/lib/prisma');
+    const student = await prisma.user.findUnique({ where: { email: 'student@zakir.edu' } });
+    if (student) {
+      const profile = await prisma.studentProfile.findUnique({ where: { userId: student.id } });
+      if (profile) {
+        const cg = await prisma.curriculumGrade.findFirst({
+          where: { curriculumId: profile.curriculumId, gradeId: profile.gradeId },
+        });
+        const subjects = cg ? await prisma.subject.findMany({
+          where: { curriculumGradeId: cg.id, isActive: true },
+        }) : [];
+        results.studentTest = {
+          userId: student.id,
+          profileId: profile.id,
+          curriculumId: profile.curriculumId,
+          gradeId: profile.gradeId,
+          curriculumGradeId: cg?.id || null,
+          subjectsCount: subjects.length,
+          subjectNames: subjects.map(s => s.nameAr),
+        };
+      } else {
+        results.studentTest = { error: 'No profile found for student@zakir.edu' };
+      }
+    } else {
+      results.studentTest = { error: 'User student@zakir.edu not found' };
+    }
+  } catch (error: any) {
+    results.studentTest = { error: error.message?.substring(0, 300) };
   }
 
   return NextResponse.json(results, { status: 200 });
