@@ -52,9 +52,7 @@ export function Sidebar({ user, mobileOpen, onMobileClose }: { user: any; mobile
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold truncate">{user?.firstName} {user?.lastName}</p>
             <div className="flex items-center gap-1">
-              {user?.role === 'TEACHER' ? (
-                <Badge className="text-xs bg-green-100 text-green-700 border-green-200 py-0 px-1.5">معلم</Badge>
-              ) : user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' ? (
+              {user?.role === 'SUPER_ADMIN' || user?.role === 'ADMIN' ? (
                 <Badge className="text-xs bg-purple-100 text-purple-700 border-purple-200 py-0 px-1.5">مدير</Badge>
               ) : (
                 <>

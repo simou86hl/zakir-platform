@@ -32,15 +32,12 @@ export const authConfig: NextAuthConfig = {
         if (['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) {
           return Response.redirect(new URL('/admin', nextUrl));
         }
-        if (userRole === 'TEACHER') {
-          return Response.redirect(new URL('/teacher', nextUrl));
-        }
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
 
       if (!isLoggedIn && !isPublicRoute) return false;
 
-      // Only students need onboarding; teachers and admins skip it
+      // Only students need onboarding; admins skip it
       const needsOnboarding = !hasProfile && userRole === 'STUDENT';
       if (isLoggedIn && needsOnboarding && !isOnboardingRoute && !isAuthRoute && !isPublicRoute) {
         return Response.redirect(new URL('/select-country', nextUrl));
@@ -48,12 +45,6 @@ export const authConfig: NextAuthConfig = {
 
       // Only admins can access admin routes
       if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
-      }
-
-      // Only teachers can access teacher routes
-      if (pathname.startsWith('/teacher') && userRole !== 'TEACHER') {
-        if (['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) return Response.redirect(new URL('/admin', nextUrl));
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
 

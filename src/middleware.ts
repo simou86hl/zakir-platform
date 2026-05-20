@@ -23,8 +23,10 @@ export function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.includes(pathname);
   const isAuthRoute = authRoutes.includes(pathname);
 
-  // If logged in and trying to access auth routes, redirect to dashboard
+  // If logged in and trying to access auth routes, redirect based on role
   if (isAuthRoute && isLoggedIn) {
+    // We can't read the JWT payload here (it's encrypted), so just redirect to dashboard.
+    // The auth.config.ts authorized callback will handle role-based redirect if needed.
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

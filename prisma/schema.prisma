@@ -41,7 +41,6 @@ enum Gender {
 }
 enum UserRole {
   STUDENT
-  TEACHER
   ADMIN
   SUPER_ADMIN
 }

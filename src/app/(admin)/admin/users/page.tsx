@@ -18,11 +18,11 @@ async function getUsers() {
 }
 
 const roleColors: Record<string, string> = {
-  STUDENT: 'bg-blue-100 text-blue-700', TEACHER: 'bg-green-100 text-green-700',
+  STUDENT: 'bg-blue-100 text-blue-700',
   ADMIN: 'bg-orange-100 text-orange-700', SUPER_ADMIN: 'bg-red-100 text-red-700',
 };
 const roleLabels: Record<string, string> = {
-  STUDENT: 'طالب', TEACHER: 'معلم', ADMIN: 'أدمن', SUPER_ADMIN: 'سوبر أدمن',
+  STUDENT: 'طالب', ADMIN: 'أدمن', SUPER_ADMIN: 'سوبر أدمن',
 };
 const planColors: Record<string, string> = {
   FREE: 'bg-gray-100 text-gray-600', BASIC: 'bg-blue-100 text-blue-600', PRO: 'bg-purple-100 text-purple-600',

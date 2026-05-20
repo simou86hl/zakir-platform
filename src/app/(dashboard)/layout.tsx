@@ -10,7 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const hasProfile = (session.user as any).hasProfile;
   const userRole = (session.user as any).role;
 
-  // Only students need onboarding; teachers and admins can access dashboard directly
+  // Only students need onboarding; admins can access dashboard directly
   if (!hasProfile && userRole === 'STUDENT') redirect('/select-country');
 
   return (

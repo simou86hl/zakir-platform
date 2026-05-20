@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 export function AdminShell({ user, children }: { user: any; children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const role = user?.role;
-  const roleLabel = role === 'TEACHER' ? 'معلم' : role === 'SUPER_ADMIN' ? 'مدير أعلى' : 'مدير';
-  const roleBadge = role === 'TEACHER' ? 'bg-green-500' : 'bg-orange-500';
+  const roleLabel = role === 'SUPER_ADMIN' ? 'مدير أعلى' : 'مدير';
+  const roleBadge = 'bg-orange-500';
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
