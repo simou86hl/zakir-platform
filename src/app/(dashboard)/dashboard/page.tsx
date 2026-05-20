@@ -37,7 +37,10 @@ async function getDashboardData(userId: string) {
       },
     });
     return profile;
-  } catch { return null; }
+  } catch (error) {
+    console.error('[Dashboard] Error fetching data:', error);
+    return null;
+  }
 }
 
 async function getRecommendedLessons(profile: any) {
@@ -58,7 +61,10 @@ async function getRecommendedLessons(profile: any) {
       take: 3,
       orderBy: { sortOrder: 'asc' },
     });
-  } catch { return []; }
+  } catch (error) {
+    console.error('[Dashboard] Error fetching recommended lessons:', error);
+    return [];
+  }
 }
 
 export default async function DashboardPage() {

@@ -41,7 +41,10 @@ async function getSubjectsForStudent(userId: string) {
       orderBy: { sortOrder: 'asc' },
     });
     return { profile, subjects };
-  } catch { return { profile: null, subjects: [] }; }
+  } catch (error) {
+    console.error('[Subjects] Error fetching subjects:', error);
+    return { profile: null, subjects: [] };
+  }
 }
 
 const difficultyInfo = { EASY: { label: 'سهل', color: 'bg-green-100 text-green-700' }, MEDIUM: { label: 'متوسط', color: 'bg-yellow-100 text-yellow-700' }, HARD: { label: 'صعب', color: 'bg-red-100 text-red-700' } };
