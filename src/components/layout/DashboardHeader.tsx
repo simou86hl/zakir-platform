@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, Search, Menu, X, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -10,6 +10,8 @@ export function DashboardHeader({ user }: { user: any }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <header className="h-14 bg-card/95 backdrop-blur border-b flex items-center gap-3 px-4 lg:px-6 sticky top-0 z-30">
@@ -44,7 +46,7 @@ export function DashboardHeader({ user }: { user: any }) {
         {/* Theme toggle */}
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted transition-colors">
-          {theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+          {mounted ? (theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />) : <div className="h-4.5 w-4.5" />}
         </button>
 
         {/* Notifications */}
