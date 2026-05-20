@@ -115,10 +115,11 @@ export default function LoginPage() {
       {/* Demo accounts */}
       <div className="bg-muted/50 rounded-xl p-4 space-y-3">
         <p className="text-xs font-semibold text-muted-foreground text-center">حسابات تجريبية للاختبار</p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {[
             { role: 'طالب', email: 'student@zakir.edu', pass: 'Student1234!' },
-            { role: 'أدمن', email: 'admin@zakir.edu', pass: 'Admin1234!' },
+            { role: 'معلم', email: 'teacher@zakir.edu', pass: 'Teacher1234!' },
+            { role: 'مدير', email: 'admin@zakir.edu', pass: 'Admin1234!' },
           ].map((acc) => (
             <button
               key={acc.role}

@@ -78,6 +78,9 @@ export default function RegisterPage() {
       });
       if (!signInResult?.error) {
         addToast('تم إنشاء حسابك بنجاح! 🎉', 'success');
+        // Save credentials temporarily for onboarding re-login
+        localStorage.setItem('onboarding_email', data.email);
+        localStorage.setItem('onboarding_password', data.password);
         router.push('/select-country');
       }
     } catch {

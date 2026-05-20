@@ -28,12 +28,14 @@ export const authConfig: NextAuthConfig = {
       if (!isLoggedIn && !isPublicRoute) return false;
 
       const hasProfile = (auth?.user as any)?.hasProfile;
-      if (isLoggedIn && !hasProfile && !isOnboardingRoute && !isAuthRoute && !isPublicRoute) {
+      const userRole = (auth?.user as any)?.role;
+      // Only students need onboarding; teachers and admins skip it
+      const needsOnboarding = !hasProfile && userRole === 'STUDENT';
+      if (isLoggedIn && needsOnboarding && !isOnboardingRoute && !isAuthRoute && !isPublicRoute) {
         return Response.redirect(new URL('/select-country', nextUrl));
       }
 
-      const userRole = (auth?.user as any)?.role;
-      if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) {
+      if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN', 'TEACHER'].includes(userRole || '')) {
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
 

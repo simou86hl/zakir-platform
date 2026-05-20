@@ -62,7 +62,21 @@ export default function SelectPlanPage() {
         localStorage.removeItem('onboarding_curriculum');
         localStorage.removeItem('onboarding_grade_id');
         localStorage.removeItem('onboarding_stage');
-        router.push('/dashboard');
+        localStorage.removeItem('onboarding_email');
+        localStorage.removeItem('onboarding_password');
+        // Sign out and sign in again to refresh JWT with hasProfile=true
+        const { default: signOut } = await import('next-auth/react').then(m => ({ default: m.signOut }));
+        await signOut({ redirect: false });
+        const { default: signIn } = await import('next-auth/react').then(m => ({ default: m.signIn }));
+        const email = localStorage.getItem('onboarding_email') || '';
+        const password = localStorage.getItem('onboarding_password') || '';
+        if (email && password) {
+          await signIn('credentials', { email, password, redirect: false });
+          router.push('/dashboard');
+        } else {
+          // Fallback: redirect to login
+          router.push('/login');
+        }
         router.refresh();
       }
     } catch {
