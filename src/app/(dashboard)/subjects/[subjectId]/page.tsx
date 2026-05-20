@@ -34,7 +34,9 @@ export default async function SubjectPage({ params }: { params: { subjectId: str
   const userId = (session?.user as any)?.id;
 
   let subject, profile, lessonProgresses;
+  let dbError: string | null = null;
   try {
+    console.log('[SubjectDetail] Fetching subject:', params.subjectId, 'for user:', userId);
     [subject, profile] = await Promise.all([
       prisma.subject.findUnique({
         where: { id: params.subjectId },
@@ -57,7 +59,12 @@ export default async function SubjectPage({ params }: { params: { subjectId: str
       prisma.studentProfile.findUnique({ where: { userId } }),
     ]);
 
-    if (!subject) notFound();
+    console.log('[SubjectDetail] Subject found:', !!subject, 'Profile found:', !!profile);
+
+    if (!subject) {
+      console.log('[SubjectDetail] Subject not found for id:', params.subjectId);
+      notFound();
+    }
 
     if (profile) {
       lessonProgresses = await prisma.lessonProgress.findMany({
@@ -65,11 +72,33 @@ export default async function SubjectPage({ params }: { params: { subjectId: str
         select: { lessonId: true, status: true, completionRate: true, timeSpent: true },
       });
     }
-  } catch {
-    notFound();
+  } catch (error: any) {
+    console.error('[SubjectDetail] Error:', error?.message || error);
+    dbError = error?.message || 'Unknown error';
+    // If it's a notFound() call, re-throw it
+    if (error && error.message === 'NEXT_NOT_FOUND') {
+      notFound();
+    }
   }
 
-  if (!subject) notFound();
+  if (!subject && !dbError) notFound();
+
+  // Show error details for debugging
+  if (dbError && !subject) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <div className="h-24 w-24 rounded-full bg-red-50 flex items-center justify-center">
+          <span className="text-4xl">⚠️</span>
+        </div>
+        <h2 className="text-xl font-bold">خطأ في تحميل المادة</h2>
+        <p className="text-muted-foreground text-sm max-w-md text-center">{dbError}</p>
+        <p className="text-xs text-muted-foreground">subjectId: {params.subjectId} | userId: {userId || 'غير متوفر'}</p>
+        <Button asChild variant="outline">
+          <Link href="/subjects">العودة للمواد</Link>
+        </Button>
+      </div>
+    );
+  }
 
   const progressMap = new Map((lessonProgresses || []).map(lp => [lp.lessonId, lp]));
   const subjectProgress = subject.subjectProgresses[0];
