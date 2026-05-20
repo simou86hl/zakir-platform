@@ -29,8 +29,11 @@ export const authConfig: NextAuthConfig = {
 
       // Redirect logged-in users away from auth pages based on role
       if (isAuthRoute && isLoggedIn) {
-        if (['ADMIN', 'SUPER_ADMIN', 'TEACHER'].includes(userRole || '')) {
+        if (['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) {
           return Response.redirect(new URL('/admin', nextUrl));
+        }
+        if (userRole === 'TEACHER') {
+          return Response.redirect(new URL('/teacher', nextUrl));
         }
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
@@ -43,8 +46,14 @@ export const authConfig: NextAuthConfig = {
         return Response.redirect(new URL('/select-country', nextUrl));
       }
 
-      // Only admins and teachers can access admin routes
-      if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN', 'TEACHER'].includes(userRole || '')) {
+      // Only admins can access admin routes
+      if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+
+      // Only teachers can access teacher routes
+      if (pathname.startsWith('/teacher') && userRole !== 'TEACHER') {
+        if (['ADMIN', 'SUPER_ADMIN'].includes(userRole || '')) return Response.redirect(new URL('/admin', nextUrl));
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
 

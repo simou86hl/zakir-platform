@@ -38,8 +38,10 @@ export default function LoginPage() {
         const sessionRes = await fetch('/api/auth/session');
         const session = await sessionRes.json();
         const role = session?.user?.role;
-        if (role === 'TEACHER' || role === 'ADMIN' || role === 'SUPER_ADMIN') {
+        if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
           router.push('/admin');
+        } else if (role === 'TEACHER') {
+          router.push('/teacher');
         } else {
           router.push('/dashboard');
         }
@@ -139,8 +141,10 @@ export default function LoginPage() {
                   const sessionRes = await fetch('/api/auth/session');
                   const session = await sessionRes.json();
                   const role = session?.user?.role;
-                  if (role === 'TEACHER' || role === 'ADMIN' || role === 'SUPER_ADMIN') {
+                  if (role === 'ADMIN' || role === 'SUPER_ADMIN') {
                     router.push('/admin');
+                  } else if (role === 'TEACHER') {
+                    router.push('/teacher');
                   } else {
                     router.push('/dashboard');
                   }
