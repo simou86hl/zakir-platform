@@ -34,7 +34,15 @@ export default function LoginPage() {
         addToast('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
       } else {
         addToast('مرحباً بك! جارٍ تحويلك...', 'success');
-        router.push('/dashboard');
+        // Get session to check role
+        const sessionRes = await fetch('/api/auth/session');
+        const session = await sessionRes.json();
+        const role = session?.user?.role;
+        if (role === 'TEACHER' || role === 'ADMIN' || role === 'SUPER_ADMIN') {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
         router.refresh();
       }
     } catch {
@@ -127,7 +135,17 @@ export default function LoginPage() {
               onClick={async () => {
                 setIsLoading(true);
                 const result = await signIn('credentials', { email: acc.email, password: acc.pass, redirect: false });
-                if (!result?.error) router.push('/dashboard');
+                if (!result?.error) {
+                  const sessionRes = await fetch('/api/auth/session');
+                  const session = await sessionRes.json();
+                  const role = session?.user?.role;
+                  if (role === 'TEACHER' || role === 'ADMIN' || role === 'SUPER_ADMIN') {
+                    router.push('/admin');
+                  } else {
+                    router.push('/dashboard');
+                  }
+                  router.refresh();
+                }
                 else addToast('حساب التجربة غير متاح حالياً', 'info');
                 setIsLoading(false);
               }}

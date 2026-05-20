@@ -11,6 +11,8 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const pathname = nextUrl.pathname;
+      const userRole = (auth?.user as any)?.role;
+      const hasProfile = (auth?.user as any)?.hasProfile;
 
       const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
       const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -24,17 +26,24 @@ export const authConfig: NextAuthConfig = {
       const isApiRoute = pathname.startsWith('/api');
 
       if (isApiRoute) return true;
-      if (isAuthRoute && isLoggedIn) return Response.redirect(new URL('/dashboard', nextUrl));
+
+      // Redirect logged-in users away from auth pages based on role
+      if (isAuthRoute && isLoggedIn) {
+        if (['ADMIN', 'SUPER_ADMIN', 'TEACHER'].includes(userRole || '')) {
+          return Response.redirect(new URL('/admin', nextUrl));
+        }
+        return Response.redirect(new URL('/dashboard', nextUrl));
+      }
+
       if (!isLoggedIn && !isPublicRoute) return false;
 
-      const hasProfile = (auth?.user as any)?.hasProfile;
-      const userRole = (auth?.user as any)?.role;
       // Only students need onboarding; teachers and admins skip it
       const needsOnboarding = !hasProfile && userRole === 'STUDENT';
       if (isLoggedIn && needsOnboarding && !isOnboardingRoute && !isAuthRoute && !isPublicRoute) {
         return Response.redirect(new URL('/select-country', nextUrl));
       }
 
+      // Only admins and teachers can access admin routes
       if (isAdminRoute && !['ADMIN', 'SUPER_ADMIN', 'TEACHER'].includes(userRole || '')) {
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
