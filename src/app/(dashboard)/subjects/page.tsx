@@ -20,12 +20,22 @@ async function getSubjectsForStudent(userId: string) {
         country: { select: { nameAr: true, flag: true } },
       },
     });
-    if (!profile) return { profile: null, subjects: [] };
+    if (!profile) {
+      console.log('[Subjects] No profile found for user:', userId);
+      return { profile: null, subjects: [] };
+    }
+
+    console.log('[Subjects] Profile found:', profile.id, 'curriculumId:', profile.curriculumId, 'gradeId:', profile.gradeId);
 
     const cg = await prisma.curriculumGrade.findFirst({
       where: { curriculumId: profile.curriculumId, gradeId: profile.gradeId },
     });
-    if (!cg) return { profile, subjects: [] };
+    if (!cg) {
+      console.log('[Subjects] No CurriculumGrade found for:', profile.curriculumId, profile.gradeId);
+      return { profile, subjects: [] };
+    }
+
+    console.log('[Subjects] CurriculumGrade found:', cg.id);
 
     const subjects = await prisma.subject.findMany({
       where: { curriculumGradeId: cg.id, isActive: true },
@@ -40,18 +50,30 @@ async function getSubjectsForStudent(userId: string) {
       },
       orderBy: { sortOrder: 'asc' },
     });
+
+    console.log('[Subjects] Found', subjects.length, 'subjects');
     return { profile, subjects };
   } catch (error) {
-    console.error('[Subjects] Error fetching subjects:', error);
+    console.error('[Subjects] Error:', error);
     return { profile: null, subjects: [] };
   }
 }
 
-const difficultyInfo = { EASY: { label: 'سهل', color: 'bg-green-100 text-green-700' }, MEDIUM: { label: 'متوسط', color: 'bg-yellow-100 text-yellow-700' }, HARD: { label: 'صعب', color: 'bg-red-100 text-red-700' } };
-
 export default async function SubjectsPage() {
   const session = await auth();
-  const { profile, subjects } = await getSubjectsForStudent((session?.user as any)?.id);
+  const userId = (session?.user as any)?.id;
+
+  if (!userId) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <BookOpen className="h-16 w-16 text-muted-foreground" />
+        <h2 className="text-xl font-bold">يرجى تسجيل الدخول</h2>
+        <Link href="/login" className="text-primary hover:underline">تسجيل الدخول</Link>
+      </div>
+    );
+  }
+
+  const { profile, subjects } = await getSubjectsForStudent(userId);
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -79,7 +101,11 @@ export default async function SubjectsPage() {
           </div>
           <div className="text-center space-y-2">
             <h2 className="text-xl font-bold">لا توجد مواد بعد</h2>
-            <p className="text-muted-foreground max-w-sm">لم يتم إضافة محتوى لمنهجك وصفك الدراسي بعد. يعمل فريقنا على إضافته قريباً.</p>
+            <p className="text-muted-foreground max-w-sm">
+              {!profile 
+                ? 'لم يتم العثور على ملفك الشخصي. يرجى إكمال إعداد حسابك أولاً.'
+                : 'لم يتم إضافة محتوى لمنهجك وصفك الدراسي بعد. يعمل فريقنا على إضافته قريباً.'}
+            </p>
           </div>
           <Button asChild variant="outline">
             <Link href="/dashboard">العودة للرئيسية</Link>
@@ -93,15 +119,12 @@ export default async function SubjectsPage() {
             const freeLessons = subject.units.reduce((a, u) => a + u.lessons.filter(l => l.isFree).length, 0);
             const completionPercent = progress ? Math.round((progress.completedLessons / Math.max(totalLessons, 1)) * 100) : 0;
             const isStarted = !!progress;
-            const hasDiagnostic = !!progress?.diagnosticLevel;
 
             return (
               <Link key={subject.id} href={`/subjects/${subject.id}`}>
                 <Card className="card-hover border-0 shadow-md overflow-hidden h-full">
-                  {/* Color header */}
                   <div className="h-2 w-full" style={{ backgroundColor: subject.color || '#2563eb' }} />
                   <CardContent className="p-5 space-y-4">
-                    {/* Icon & name */}
                     <div className="flex items-start gap-3">
                       <div className="h-14 w-14 rounded-2xl flex items-center justify-center text-3xl shadow-sm shrink-0"
                         style={{ backgroundColor: (subject.color || '#2563eb') + '15' }}>
@@ -116,7 +139,6 @@ export default async function SubjectsPage() {
                       </div>
                     </div>
 
-                    {/* Stats */}
                     <div className="grid grid-cols-3 gap-2 text-center">
                       {[
                         { val: subject.units.length, label: 'وحدة' },
@@ -130,7 +152,6 @@ export default async function SubjectsPage() {
                       ))}
                     </div>
 
-                    {/* Progress */}
                     {isStarted ? (
                       <div className="space-y-1.5">
                         <div className="flex justify-between text-xs text-muted-foreground">
@@ -138,24 +159,14 @@ export default async function SubjectsPage() {
                           <span className="font-semibold" style={{ color: subject.color || '#2563eb' }}>{completionPercent}%</span>
                         </div>
                         <Progress value={completionPercent} className="h-2" />
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">{progress?.completedLessons} / {totalLessons} درس</span>
-                          {hasDiagnostic && (
-                            <Badge className="text-xs bg-purple-100 text-purple-700 border-purple-200 py-0">
-                              <Target className="h-3 w-3 ml-1" />
-                              {progress?.diagnosticLevel === 'advanced' ? 'متقدم' : progress?.diagnosticLevel === 'medium' ? 'متوسط' : 'مبتدئ'}
-                            </Badge>
-                          )}
-                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-2.5">
                         <Target className="h-4 w-4 text-primary shrink-0" />
-                        <span>ابدأ باختبار تحديد المستوى</span>
+                        <span>ابدأ بالدرس الأول مجاناً</span>
                       </div>
                     )}
 
-                    {/* CTA */}
                     <div className="flex items-center justify-between pt-1">
                       <div className="text-xs text-muted-foreground">
                         {!isStarted ? '🆕 لم يبدأ' : completionPercent === 100 ? '✅ مكتمل' : '📖 جارٍ'}
