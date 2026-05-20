@@ -2,10 +2,10 @@
 const nextConfig = {
   // في production أزل هذه الـ flags - نحتاجها مؤقتاً فقط
   eslint: {
-    ignoreDuringBuilds: true, // سيتم تصحيحه لاحقاً
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true, // سيتم تصحيحه لاحقاً
+    ignoreBuildErrors: true,
   },
   images: {
     remotePatterns: [
@@ -14,9 +14,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
-  experimental: {
-    serverActions: { bodySizeLimit: '2mb' },
-  },
+
 };
 
 module.exports = nextConfig;
