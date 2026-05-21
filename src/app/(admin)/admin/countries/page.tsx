@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, BookOpen, GraduationCap } from 'lucide-react';
 import { AddCountryForm } from '@/components/admin/AddCountryForm';
+import { DeleteCountryBtn, ToggleCountryBtn } from '@/components/admin/CountryBtns';
 
 export const metadata = { title: 'إدارة الدول والمناهج' };
 
@@ -105,9 +106,9 @@ export default async function CountriesPage() {
 
               <div className="flex items-center justify-between mt-4 pt-3 border-t text-xs text-muted-foreground">
                 <span>👥 {country._count.studentProfiles} طالب</span>
-                <div className="flex gap-2">
-                  <button className="text-primary hover:underline">تعديل</button>
-                  <button className="text-red-500 hover:underline">حذف</button>
+                <div className="flex gap-3">
+                  <ToggleCountryBtn countryId={country.id} isActive={country.isActive} />
+                  <DeleteCountryBtn countryId={country.id} countryName={country.nameAr} />
                 </div>
               </div>
             </CardContent>

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Plus, Edit, ChevronDown, ChevronRight, FileText } from 'lucide-react';
 import Link from 'next/link';
+import { ToggleSubjectBtn } from '@/components/admin/ToggleSubjectBtn';
 
 export async function generateMetadata({ params }: { params: { subjectId: string } }) {
   const s = await prisma.subject.findUnique({ where: { id: params.subjectId }, select: { nameAr: true } }).catch(() => null);
@@ -69,7 +70,7 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
           </div>
         </div>
         <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="sm" className="gap-1"><Edit className="h-3.5 w-3.5" />تعديل</Button>
+          <ToggleSubjectBtn subjectId={subject.id} isActive={subject.isActive} />
           <Button variant="gradient" size="sm" asChild>
             <Link href="/admin/content" className="gap-1"><Plus className="h-3.5 w-3.5" />درس جديد</Link>
           </Button>
@@ -112,8 +113,9 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
                 <Badge className={unit.isActive ? 'bg-green-100 text-green-700 text-xs' : 'bg-red-100 text-red-700 text-xs'}>
                   {unit.isActive ? 'نشط' : 'معطل'}
                 </Badge>
-                <Button size="sm" variant="ghost" className="h-7 gap-1 text-xs"><Edit className="h-3 w-3" />تعديل</Button>
-                <Button size="sm" variant="outline" className="h-7 gap-1 text-xs"><Plus className="h-3 w-3" />درس</Button>
+                <Button size="sm" variant="outline" className="h-7 gap-1 text-xs" asChild>
+                  <Link href="/admin/content"><Plus className="h-3 w-3" />درس</Link>
+                </Button>
               </div>
             </div>
 
@@ -162,16 +164,15 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
           <div className="text-center py-16 space-y-3 border-2 border-dashed rounded-2xl">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground/30" />
             <p className="text-muted-foreground">لا توجد وحدات. ابدأ بإضافة وحدة جديدة.</p>
-            <Button variant="gradient"><Plus className="h-4 w-4 ml-1" />إضافة وحدة</Button>
+            <Button variant="gradient" asChild><Link href="/admin/content"><Plus className="h-4 w-4 ml-1" />إضافة وحدة</Link></Button>
           </div>
         )}
       </div>
 
       {/* Add unit button */}
       {subject.units.length > 0 && (
-        <Button variant="outline" className="w-full gap-2 border-dashed h-12">
-          <Plus className="h-4 w-4" />
-          إضافة وحدة جديدة
+        <Button variant="outline" className="w-full gap-2 border-dashed h-12" asChild>
+          <Link href="/admin/content"><Plus className="h-4 w-4" />إضافة وحدة جديدة</Link>
         </Button>
       )}
     </div>

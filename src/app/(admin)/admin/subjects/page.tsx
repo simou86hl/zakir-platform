@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Plus, Search, Eye, Edit } from 'lucide-react';
 import Link from 'next/link';
+import { ToggleSubjectBtn } from '@/components/admin/ToggleSubjectBtn';
 
 export const metadata = { title: 'إدارة المواد' };
 
@@ -117,12 +118,10 @@ export default async function SubjectsPage() {
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex gap-1">
-                              <Link href={`/admin/subjects/${s.id}`} className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                              <Link href={`/admin/subjects/${s.id}`} className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="عرض">
                                 <Eye className="h-3.5 w-3.5" />
                               </Link>
-                              <button className="p-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
-                                <Edit className="h-3.5 w-3.5" />
-                              </button>
+                              <ToggleSubjectBtn subjectId={s.id} isActive={s.isActive} />
                             </div>
                           </td>
                         </tr>
@@ -172,12 +171,10 @@ export default async function SubjectsPage() {
                         <span>{lessonCount} دروس</span>
                       </div>
                       <div className="flex gap-1">
-                        <Link href={`/admin/subjects/${s.id}`} className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                        <Link href={`/admin/subjects/${s.id}`} className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="عرض">
                           <Eye className="h-3.5 w-3.5" />
                         </Link>
-                        <button className="p-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">
-                          <Edit className="h-3.5 w-3.5" />
-                        </button>
+                        <ToggleSubjectBtn subjectId={s.id} isActive={s.isActive} />
                       </div>
                     </div>
                   </CardContent>

@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard } from 'lucide-react';
+import { ExtendSubBtn, CancelSubBtn } from '@/components/admin/SubscriptionBtns';
 
 export const metadata = { title: 'إدارة الاشتراكات' };
 
@@ -106,8 +107,8 @@ export default async function SubscriptionsPage() {
                         <td className="py-3 px-4 text-xs">{new Date(sub.endDate).toLocaleDateString('ar-SA')}</td>
                         <td className="py-3 px-4">
                           <div className="flex gap-1">
-                            <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تمديد</button>
-                            <button className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">إلغاء</button>
+                            <ExtendSubBtn subscriptionId={sub.id} endDate={sub.endDate} />
+                            <CancelSubBtn subscriptionId={sub.id} />
                           </div>
                         </td>
                       </tr>
@@ -143,8 +144,8 @@ export default async function SubscriptionsPage() {
                       ينتهي: {new Date(sub.endDate).toLocaleDateString('ar-SA')}
                     </span>
                     <div className="flex gap-1">
-                      <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تمديد</button>
-                      <button className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">إلغاء</button>
+                      <ExtendSubBtn subscriptionId={sub.id} endDate={sub.endDate} />
+                      <CancelSubBtn subscriptionId={sub.id} />
                     </div>
                   </div>
                 </CardContent>

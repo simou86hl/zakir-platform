@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, UserCheck, UserX, Search } from 'lucide-react';
 import { UserToggleBtn } from '@/components/admin/UserToggleBtn';
+import { EditUserBtn } from '@/components/admin/EditUserBtn';
 
 export const metadata = { title: 'إدارة المستخدمين' };
 
@@ -144,7 +145,7 @@ export default async function UsersPage() {
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-1">
-                              <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تعديل</button>
+                              <EditUserBtn userId={u.id} firstName={u.firstName} lastName={u.lastName} role={u.role} />
                               <UserToggleBtn userId={u.id} isActive={u.isActive} />
                             </div>
                           </td>
@@ -195,7 +196,7 @@ export default async function UsersPage() {
                           {u.studentProfile && <span className="mr-2">🔥 {u.studentProfile.studyStreak} أيام</span>}
                         </span>
                         <div className="flex items-center gap-1">
-                          <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تعديل</button>
+                          <EditUserBtn userId={u.id} firstName={u.firstName} lastName={u.lastName} role={u.role} />
                           <UserToggleBtn userId={u.id} isActive={u.isActive} />
                         </div>
                       </div>
