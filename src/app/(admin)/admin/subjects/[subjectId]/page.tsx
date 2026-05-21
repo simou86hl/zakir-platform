@@ -49,14 +49,14 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-3xl shadow-md"
+          <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-3xl shadow-md shrink-0"
             style={{ backgroundColor: (subject.color || '#2563eb') + '20' }}>
             {subject.icon || '📚'}
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-black">{subject.nameAr}</h1>
               <Badge className={subject.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
                 {subject.isActive ? 'نشط' : 'معطل'}
@@ -68,7 +68,7 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <Button variant="outline" size="sm" className="gap-1"><Edit className="h-3.5 w-3.5" />تعديل</Button>
           <Button variant="gradient" size="sm" asChild>
             <Link href="/admin/content" className="gap-1"><Plus className="h-3.5 w-3.5" />درس جديد</Link>
@@ -100,15 +100,15 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
       <div className="space-y-4">
         {subject.units.map((unit, ui) => (
           <Card key={unit.id} className="shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between p-4 bg-muted/30 border-b">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-muted/30 border-b gap-3">
               <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary font-black text-sm flex items-center justify-center">{ui + 1}</div>
+                <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary font-black text-sm flex items-center justify-center shrink-0">{ui + 1}</div>
                 <div>
                   <h3 className="font-bold text-sm">{unit.nameAr}</h3>
                   <p className="text-xs text-muted-foreground">{unit.lessons.length} درس</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge className={unit.isActive ? 'bg-green-100 text-green-700 text-xs' : 'bg-red-100 text-red-700 text-xs'}>
                   {unit.isActive ? 'نشط' : 'معطل'}
                 </Badge>
@@ -121,32 +121,36 @@ export default async function AdminSubjectPage({ params }: { params: { subjectId
               {unit.lessons.length === 0 ? (
                 <p className="text-center py-6 text-sm text-muted-foreground">لا توجد دروس في هذه الوحدة</p>
               ) : unit.lessons.map((lesson, li) => (
-                <div key={lesson.id} className="flex items-center gap-4 p-3.5 hover:bg-muted/20 transition-colors">
-                  <div className="h-7 w-7 rounded-full bg-muted text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
-                    {ui + 1}.{li + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{lesson.nameAr}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[lesson.difficulty]}`}>{diffLabels[lesson.difficulty]}</span>
-                      <span className="text-xs text-muted-foreground">{lesson.estimatedTime}د</span>
-                      {lesson.isFree && <Badge className="text-xs py-0 bg-green-100 text-green-700">مجاني</Badge>}
+                <div key={lesson.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3.5 hover:bg-muted/20 transition-colors">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="h-7 w-7 rounded-full bg-muted text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                      {ui + 1}.{li + 1}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{lesson.nameAr}</p>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${diffColors[lesson.difficulty]}`}>{diffLabels[lesson.difficulty]}</span>
+                        <span className="text-xs text-muted-foreground">{lesson.estimatedTime}د</span>
+                        {lesson.isFree && <Badge className="text-xs py-0 bg-green-100 text-green-700">مجاني</Badge>}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
-                    <span title="محتوى">📄 {lesson._count.contents}</span>
-                    <span title="تمارين">✏️ {lesson._count.exercises}</span>
-                    {lesson.summary && <span title="ملخص">📋 ✓</span>}
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <Link href={`/admin/content?lessonId=${lesson.id}`}
-                      className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="تعديل">
-                      <Edit className="h-3.5 w-3.5" />
-                    </Link>
-                    <Link href={`/subjects/${subject.id}/lessons/${lesson.id}`} target="_blank"
-                      className="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="معاينة">
-                      <FileText className="h-3.5 w-3.5" />
-                    </Link>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      <span title="محتوى">📄 {lesson._count.contents}</span>
+                      <span title="تمارين">✏️ {lesson._count.exercises}</span>
+                      {lesson.summary && <span title="ملخص">📋 ✓</span>}
+                    </div>
+                    <div className="flex gap-1">
+                      <Link href={`/admin/content?lessonId=${lesson.id}`}
+                        className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="تعديل">
+                        <Edit className="h-3.5 w-3.5" />
+                      </Link>
+                      <Link href={`/subjects/${subject.id}/lessons/${lesson.id}`} target="_blank"
+                        className="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="معاينة">
+                        <FileText className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}

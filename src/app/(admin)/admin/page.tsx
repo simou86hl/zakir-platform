@@ -101,49 +101,86 @@ export default async function AdminDashboardPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">المستخدم</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">البريد</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">الدور</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">الحالة</th>
-                  <th className="text-right py-2 px-3 text-muted-foreground font-medium">تاريخ التسجيل</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentUsers.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">لا يوجد مستخدمون بعد - شغّل seed أولاً</td></tr>
-                ) : recentUsers.map((u) => (
-                  <tr key={u.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                          {u.firstName[0]}{u.lastName[0]}
+          {recentUsers.length === 0 ? (
+            <p className="text-center py-8 text-muted-foreground">لا يوجد مستخدمون بعد - شغّل seed أولاً</p>
+          ) : (
+            <>
+              {/* Desktop table - hidden on mobile */}
+              <div className="hidden lg:block">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-right py-2 px-3 text-muted-foreground font-medium">المستخدم</th>
+                        <th className="text-right py-2 px-3 text-muted-foreground font-medium">البريد</th>
+                        <th className="text-right py-2 px-3 text-muted-foreground font-medium">الدور</th>
+                        <th className="text-right py-2 px-3 text-muted-foreground font-medium">الحالة</th>
+                        <th className="text-right py-2 px-3 text-muted-foreground font-medium">تاريخ التسجيل</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentUsers.map((u) => (
+                        <tr key={u.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                          <td className="py-3 px-3">
+                            <div className="flex items-center gap-2">
+                              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                                {u.firstName[0]}{u.lastName[0]}
+                              </div>
+                              <span className="font-medium">{u.firstName} {u.lastName}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-3 text-muted-foreground">{u.email}</td>
+                          <td className="py-3 px-3">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[u.role] || ''}`}>
+                              {roleLabels[u.role] || u.role}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {u.isActive ? 'نشط' : 'معطل'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-3 text-muted-foreground text-xs">
+                            {new Date(u.createdAt).toLocaleDateString('ar-SA')}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Mobile cards - hidden on desktop */}
+              <div className="lg:hidden space-y-3">
+                {recentUsers.map((u) => (
+                  <Card key={u.id} className="border shadow-none">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                            {u.firstName[0]}{u.lastName[0]}
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{u.firstName} {u.lastName}</p>
+                            <p className="text-xs text-muted-foreground">{u.email}</p>
+                          </div>
                         </div>
-                        <span className="font-medium">{u.firstName} {u.lastName}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {u.isActive ? 'نشط' : 'معطل'}
+                        </span>
                       </div>
-                    </td>
-                    <td className="py-3 px-3 text-muted-foreground">{u.email}</td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[u.role] || ''}`}>
-                        {roleLabels[u.role] || u.role}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {u.isActive ? 'نشط' : 'معطل'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-muted-foreground text-xs">
-                      {new Date(u.createdAt).toLocaleDateString('ar-SA')}
-                    </td>
-                  </tr>
+                      <div className="flex items-center gap-2 mt-3 text-xs">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[u.role] || ''}`}>
+                          {roleLabels[u.role] || u.role}
+                        </span>
+                        <span className="text-muted-foreground">{new Date(u.createdAt).toLocaleDateString('ar-SA')}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

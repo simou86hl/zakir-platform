@@ -67,49 +67,92 @@ export default async function SubscriptionsPage() {
         ))}
       </div>
 
-      <Card className="shadow-sm">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/50">
-                <tr>
-                  {['المستخدم', 'الباقة', 'الحالة', 'الدورة', 'تاريخ الانتهاء', 'إجراءات'].map(h => (
-                    <th key={h} className="text-right py-3 px-4 font-medium text-muted-foreground text-xs">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {subs.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-12 text-muted-foreground">لا توجد اشتراكات</td></tr>
-                ) : subs.map(sub => (
-                  <tr key={sub.id} className="border-t hover:bg-muted/20 transition-colors">
-                    <td className="py-3 px-4">
-                      <div>
-                        <p className="font-medium">{sub.user.firstName} {sub.user.lastName}</p>
-                        <p className="text-xs text-muted-foreground">{sub.user.email}</p>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge className={`${planColors[sub.plan.type] || ''} text-xs`}>{sub.plan.nameAr}</Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge className={`${statusColors[sub.status] || ''} text-xs`}>{statusLabels[sub.status] || sub.status}</Badge>
-                    </td>
-                    <td className="py-3 px-4 text-xs">{sub.billingCycle === 'YEARLY' ? 'سنوي' : 'شهري'}</td>
-                    <td className="py-3 px-4 text-xs">{new Date(sub.endDate).toLocaleDateString('ar-SA')}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex gap-1">
-                        <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تمديد</button>
-                        <button className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">إلغاء</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {subs.length === 0 ? (
+        <Card className="shadow-sm">
+          <CardContent className="p-0">
+            <p className="text-center py-12 text-muted-foreground">لا توجد اشتراكات</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Desktop table - hidden on mobile */}
+          <Card className="shadow-sm hidden lg:block">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      {['المستخدم', 'الباقة', 'الحالة', 'الدورة', 'تاريخ الانتهاء', 'إجراءات'].map(h => (
+                        <th key={h} className="text-right py-3 px-4 font-medium text-muted-foreground text-xs">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subs.map(sub => (
+                      <tr key={sub.id} className="border-t hover:bg-muted/20 transition-colors">
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium">{sub.user.firstName} {sub.user.lastName}</p>
+                            <p className="text-xs text-muted-foreground">{sub.user.email}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={`${planColors[sub.plan.type] || ''} text-xs`}>{sub.plan.nameAr}</Badge>
+                        </td>
+                        <td className="py-3 px-4">
+                          <Badge className={`${statusColors[sub.status] || ''} text-xs`}>{statusLabels[sub.status] || sub.status}</Badge>
+                        </td>
+                        <td className="py-3 px-4 text-xs">{sub.billingCycle === 'YEARLY' ? 'سنوي' : 'شهري'}</td>
+                        <td className="py-3 px-4 text-xs">{new Date(sub.endDate).toLocaleDateString('ar-SA')}</td>
+                        <td className="py-3 px-4">
+                          <div className="flex gap-1">
+                            <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تمديد</button>
+                            <button className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">إلغاء</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Mobile cards - hidden on desktop */}
+          <div className="lg:hidden space-y-3">
+            {subs.map(sub => (
+              <Card key={sub.id} className="border shadow-none">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-sm">{sub.user.firstName} {sub.user.lastName}</p>
+                      <p className="text-xs text-muted-foreground">{sub.user.email}</p>
+                    </div>
+                    <Badge className={`${statusColors[sub.status] || ''} text-xs shrink-0`}>
+                      {statusLabels[sub.status] || sub.status}
+                    </Badge>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <Badge className={`${planColors[sub.plan.type] || ''} text-xs`}>{sub.plan.nameAr}</Badge>
+                    <span className="text-xs text-muted-foreground">{sub.billingCycle === 'YEARLY' ? 'سنوي' : 'شهري'}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                    <span className="text-xs text-muted-foreground">
+                      ينتهي: {new Date(sub.endDate).toLocaleDateString('ar-SA')}
+                    </span>
+                    <div className="flex gap-1">
+                      <button className="px-2 py-1 text-xs bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors">تمديد</button>
+                      <button className="px-2 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">إلغاء</button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        </>
+      )}
     </div>
   );
 }

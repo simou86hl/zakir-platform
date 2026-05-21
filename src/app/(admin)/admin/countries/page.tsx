@@ -28,7 +28,7 @@ export default async function CountriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-black">الدول والمناهج 🌍</h1>
           <p className="text-muted-foreground">{countries.length} دولة عربية مسجلة</p>
@@ -37,7 +37,7 @@ export default async function CountriesPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'دول مسجلة', value: countries.length, icon: Globe, color: 'from-blue-500 to-blue-600' },
           { label: 'مناهج', value: countries.reduce((a, c) => a + c.curricula.length, 0), icon: BookOpen, color: 'from-purple-500 to-purple-600' },
@@ -58,9 +58,9 @@ export default async function CountriesPage() {
       </div>
 
       {/* Countries grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {countries.length === 0 ? (
-          <div className="col-span-3 text-center py-20 text-muted-foreground">
+          <div className="col-span-full text-center py-20 text-muted-foreground">
             <Globe className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p>لا توجد دول. شغّل الـ seed أو أضف دولة يدوياً.</p>
           </div>
